@@ -1,0 +1,29 @@
+{
+    "name": "prooxxy/magento2-appcode-composer-constraints",
+    "description": "",
+    "type": "composer-plugin",
+    "version": "1.0.0",
+    "keywords": ["magento2", "composer"],
+    "license": ["MIT"],
+    "require": {
+        "composer-plugin-api": "1.1.0",
+        "phpunit/phpunit": "9"
+    },
+    "require-dev": {
+        "composer/composer": "^2.0"
+    },
+    "authors": [
+        {
+            "name": "Hampus Westman",
+            "email": "hampus.westman@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PrOOxxy\\MagentoComposerConstraints\\": "src/"
+        }
+    },
+    "extra": {
+        "class": "PrOOxxy\\MagentoComposerConstraints"
+    }
+}
