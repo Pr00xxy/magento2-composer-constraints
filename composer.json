@@ -6,11 +6,7 @@
     "keywords": ["magento2", "composer"],
     "license": ["MIT"],
     "require": {
-        "composer-plugin-api": "1.1.0",
-        "phpunit/phpunit": "9"
-    },
-    "require-dev": {
-        "composer/composer": "^2.0"
+        "composer-plugin-api": "1.1.0"
     },
     "authors": [
         {
@@ -24,6 +20,6 @@
         }
     },
     "extra": {
-        "class": "PrOOxxy\\MagentoComposerConstraints"
+        "class": "\\PrOOxxy\\MagentoComposerConstraints\\Event\\PostInstallCompatability"
     }
 }
