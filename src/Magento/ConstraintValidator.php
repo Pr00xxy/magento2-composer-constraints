@@ -85,6 +85,10 @@ class ConstraintValidator
         return $this->processLinks(array_merge($requires, $requiresDev));
     }
 
+    /**
+     * @param $links Link[]
+     * @return array
+     */
     private function processLinks(array $links): array
     {
         $violations = [];
@@ -95,7 +99,7 @@ class ConstraintValidator
                 continue;
             }
 
-            $violations[] = '<error> - ['.$package->getName().'] Currently installed: '.$package->getVersion().' does not satisfy constraint '.$link->getConstraint()->getPrettyString().'</error>';
+            $violations[] = '<error> - ['.$package->getName().'] Installed: '.$package->getVersion().' does not satisfy constraint '.$link->getConstraint().'</error>';
         }
         return $violations;
     }
