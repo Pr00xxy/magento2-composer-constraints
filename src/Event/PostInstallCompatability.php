@@ -7,17 +7,12 @@ namespace PrOOxxy\MagentoComposerConstraints\Event;
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\IO\IOInterface;
-use Composer\Json\JsonFile;
-use Composer\Package\Loader\ArrayLoader;
-use Composer\Package\Loader\JsonLoader;
-use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
-use Composer\Semver\Semver;
-use UnexpectedValueException;
-
-define('DS', DIRECTORY_SEPARATOR);
+use PrOOxxy\MagentoComposerConstraints\Magento\ConstraintValidator;
+use PrOOxxy\MagentoComposerConstraints\Magento\LoaderInterface;
+use PrOOxxy\MagentoComposerConstraints\Magento\PackageLoader;
 
 class PostInstallCompatability implements PluginInterface, EventSubscriberInterface
 {
@@ -54,65 +49,36 @@ class PostInstallCompatability implements PluginInterface, EventSubscriberInterf
         ];
     }
 
+    protected function getPackageLoader(): LoaderInterface
+    {
+        return new PackageLoader($this->composer, $this->io);
+    }
+
+    protected function getVendorPackages(Event $event): array
+    {
+        return $event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages();
+    }
+
     public function checkModules(Event $event)
     {
-        $packages = $event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages();
+        $installedPackages = $this->getVendorPackages($event);
+        $packages = $this->getPackageLoader()->load();
 
-        $installedPackages = [];
+        $validator = new ConstraintValidator($this->composer, $installedPackages, $packages);
+
         foreach ($packages as $package) {
-            $installedPackages[$package->getName()] = $package;
-        }
-
-        $vendorPath = $this->composer->getConfig()->get('vendor-dir');
-
-        $appCodeDir = implode(DS, [$vendorPath, '..', 'app', 'code', '*', '*','composer.json']);
-
-        $files = [];
-
-        foreach (glob($appCodeDir) as $file) {
-            $files[] = $file;
-        }
-
-        $l = new ArrayLoader();
-        $jsonLoader = new JsonLoader($l);
-
-        $packages = [];
-        foreach ($files as $rawFile) {
-            $jsonFile = new JsonFile($rawFile);
-            try {
-                $packages[] = $jsonLoader->load($jsonFile);
-            } catch (UnexpectedValueException $e) {
-                #$this->io->debug($e->getMessage());
+            $this->io->debug($package->getName());
+            $violations = $validator->satisfies($package);
+            if (!empty($violations)) {
+                $this->io->write(sprintf('<comment>[NO] %s</comment>', $package->getName()));
+                foreach ($violations as $v) {
+                    $this->io->write($v);
+                }
+            } elseif ($this->io->isVerbose()) {
+                $this->io->write(sprintf('<info>[OK] %s</info>', $package->getName()));
             }
-
-        }
-
-        foreach ($packages as $package) {
-            $this->doPackageContraintCheck($package, $installedPackages);
         }
 
     }
 
-    private function doPackageContraintCheck(PackageInterface $package, array $installedDeps)
-    {
-        $requires = $package->getRequires();
-
-        $this->io->write($package->getName());
-        foreach ($requires as $link) {
-            if (!array_key_exists($link->getTarget(), $installedDeps)) {
-                continue;
-            }
-
-            $dependency = $installedDeps[$link->getTarget()];
-
-
-            $match = Semver::satisfies($dependency->getVersion(), $link->getConstraint()->getPrettyString());
-            if (!$match) {
-                $this->io->writeError('<error> - '.$dependency->getName().': '.$dependency->getVersion().'</error>');
-                continue;
-            }
-            $this->io->write('<info> - '.$dependency->getName().': '.$dependency->getVersion().'</info>');
-        }
-
-    }
 }
