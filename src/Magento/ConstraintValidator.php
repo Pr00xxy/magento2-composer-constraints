@@ -12,6 +12,7 @@ use InvalidArgumentException;
 
 class ConstraintValidator
 {
+
     /**
      * @var array
      */
@@ -25,7 +26,7 @@ class ConstraintValidator
     /**
      * @var PackageInterface[]
      */
-    private array $customPackages;
+    private $customPackages;
 
     public function __construct(
         Composer $composer,
@@ -44,13 +45,27 @@ class ConstraintValidator
         }
 
         $platformOverrides = $composer->getConfig()->get('platform') ?: array();
-        $platformRepo = new PlatformRepository(array(), $platformOverrides);
 
-        $this->platformRepo = $platformRepo;
+        $this->platformRepo = new PlatformRepository(array(), $platformOverrides);
         $this->customPackages = $customPackages;
     }
 
-    private function getPackage(Link $link)
+    /**
+     * Checks if installed packages meet the provided package requirements
+     *
+     * Returns array of violation messages if there are any.
+     * If satisfies - returns empty array
+     *
+     * @return array
+     */
+    public function satisfies(PackageInterface $package): array
+    {
+        $requires = $package->getRequires();
+
+        return $this->processLinks($requires);
+    }
+
+    private function getPackage(Link $link): ?PackageInterface
     {
 
         foreach ($this->customPackages as $package) {
@@ -70,22 +85,6 @@ class ConstraintValidator
     }
 
     /**
-     * Checks if installed packages meet the provided package requirements
-     *
-     * Returns array of violation messages if there are any.
-     * If satisfies - returns empty array
-     *
-     * @return array
-     */
-    public function satisfies(PackageInterface $package): array
-    {
-        $requires = $package->getRequires();
-        $requiresDev = $package->getDevRequires();
-
-        return $this->processLinks(array_merge($requires, $requiresDev));
-    }
-
-    /**
      * @param $links Link[]
      * @return array
      */
@@ -95,11 +94,14 @@ class ConstraintValidator
 
         foreach ($links as $link) {
             $package = $this->getPackage($link);
-            if (($package === null) || Semver::satisfies($package->getVersion(), $link->getConstraint()->getPrettyString())) {
+            if ($package === null) {
                 continue;
             }
-
-            $violations[] = '<error> - ['.$package->getName().'] Installed: '.$package->getVersion().' does not satisfy constraint '.$link->getConstraint().'</error>';
+            if (Semver::satisfies($package->getVersion(), $link->getConstraint()->getPrettyString())) {
+                continue;
+            }
+            $template = ' - <error>%s</error>, Installed: <comment>[%s]</comment> does not satisfy constraint <comment>%s</comment>';
+            $violations[] = sprintf($template, $package->getName(), $package->getVersion(), $link->getConstraint());
         }
         return $violations;
     }
