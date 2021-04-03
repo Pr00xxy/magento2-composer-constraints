@@ -1,8 +1,8 @@
 {
-    "name": "prooxxy/magento2-appcode-composer-constraints",
+    "name": "prooxxy/magento2-composer-constraints",
     "description": "",
     "type": "composer-plugin",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "keywords": ["magento2", "composer"],
     "license": ["MIT"],
     "require": {
