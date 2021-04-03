@@ -2,7 +2,7 @@
     "name": "prooxxy/magento2-composer-constraints",
     "description": "",
     "type": "composer-plugin",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "keywords": ["magento2", "composer"],
     "license": ["MIT"],
     "require": {
