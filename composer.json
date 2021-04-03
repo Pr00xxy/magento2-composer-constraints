@@ -8,6 +8,9 @@
     "require": {
         "composer-plugin-api": "1.1.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "~6.5.0"
+    },
     "authors": [
         {
             "name": "Hampus Westman",
@@ -17,6 +20,11 @@
     "autoload": {
         "psr-4": {
             "PrOOxxy\\MagentoComposerConstraints\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PrOOxxy\\MagentoComposerConstraints\\Test": "test/"
         }
     },
     "extra": {
