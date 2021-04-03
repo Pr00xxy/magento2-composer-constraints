@@ -1,4 +1,4 @@
-## Magento 2 Constraint
+## app/code constraint checker
 
 This is a composer plugin for Magento 2 that validates the constraint from propriatary app/code modules' composer.json file against the installed packages.
 
@@ -23,7 +23,7 @@ This means the plugin will not only check platform and "vendor" packages. But ca
 
 ## Installation
 
-`composer require ` 
+`composer require prooxxy/magento2-composer-constraints` 
 
 ## FAQ
 
@@ -49,6 +49,7 @@ Great! submit a bug report!
 
 0. Verify compatibility with 2.4
 1. plugin should detect and respect "--ignore-platform-reqs"
+2. plugin should check require-dev links
 
 ## Compatibility Matrix
 
