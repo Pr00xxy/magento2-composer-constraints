@@ -33,7 +33,7 @@ class PostInstallCompatability implements PluginInterface, EventSubscriberInterf
         $this->io = $io;
     }
 
-    public function deactivate(Composer $composer, IOInterface $io)
+    public function  deactivate(Composer $composer, IOInterface $io)
     {
     }
 
@@ -44,17 +44,16 @@ class PostInstallCompatability implements PluginInterface, EventSubscriberInterf
     public static function getSubscribedEvents()
     {
         return [
-            'post-package-install' => ['checkModules'],
             ScriptEvents::POST_INSTALL_CMD => ['checkModules']
         ];
     }
 
-    protected function getPackageLoader(): LoaderInterface
+    private function getPackageLoader(): PackageLoader
     {
         return new PackageLoader($this->composer, $this->io);
     }
 
-    protected function getVendorPackages(Event $event): array
+    private function getVendorPackages(Event $event): array
     {
         return $event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages();
     }
@@ -66,8 +65,8 @@ class PostInstallCompatability implements PluginInterface, EventSubscriberInterf
 
         $validator = new ConstraintValidator($this->composer, $installedPackages, $packages);
 
+        $this->io->write('Scanning Magento 2 modules constraints..');
         foreach ($packages as $package) {
-            $this->io->debug($package->getName());
             $violations = $validator->satisfies($package);
             if (!empty($violations)) {
                 $this->io->write(sprintf('<comment>[NO] %s</comment>', $package->getName()));
@@ -78,7 +77,5 @@ class PostInstallCompatability implements PluginInterface, EventSubscriberInterf
                 $this->io->write(sprintf('<info>[OK] %s</info>', $package->getName()));
             }
         }
-
     }
-
 }
