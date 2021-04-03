@@ -10,7 +10,7 @@ use Composer\Package\Loader\ArrayLoader;
 use Composer\Package\Loader\JsonLoader;
 use UnexpectedValueException;
 
-class PackageLoader implements LoaderInterface
+class PackageLoader
 {
 
     /**
@@ -44,13 +44,13 @@ class PackageLoader implements LoaderInterface
         }
 
         $l = new ArrayLoader();
-        $jsonLoader = new JsonLoader($l);
+        $json = new JsonLoader($l);
 
         $packages = [];
         foreach ($files as $rawFile) {
             $jsonFile = new JsonFile($rawFile);
             try {
-                $packages[] = $jsonLoader->load($jsonFile);
+                $packages[] = $json->load($jsonFile);
             } catch (UnexpectedValueException $e) {
                 $this->io->debug($e->getMessage());
             }
@@ -60,7 +60,7 @@ class PackageLoader implements LoaderInterface
         return $packages;
     }
 
-    protected function getGlobPatterns()
+    protected function getGlobPatterns(): array
     {
 
         $vendorPath = $this->composer->getConfig()->get('vendor-dir');
