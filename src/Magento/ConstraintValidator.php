@@ -75,6 +75,9 @@ class ConstraintValidator
         return $this->processLinks($requires);
     }
 
+    /**
+     * Find installed package in platform, vendor dir or in proprietary directory
+     */
     private function getPackage(Link $link): ?PackageInterface
     {
 
@@ -104,10 +107,7 @@ class ConstraintValidator
 
         foreach ($links as $link) {
             $package = $this->getPackage($link);
-            if ($package === null) {
-                continue;
-            }
-            if (Semver::satisfies($package->getVersion(), $link->getConstraint()->getPrettyString())) {
+            if (($package === null) || Semver::satisfies($package->getVersion(), $link->getConstraint()->getPrettyString())) {
                 continue;
             }
             $template = ' - <error>%s</error>, Installed: <comment>[%s]</comment> does not satisfy constraint <comment>%s</comment>';
