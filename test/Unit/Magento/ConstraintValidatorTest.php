@@ -49,7 +49,7 @@ class ConstraintValidatorTest extends TestCase
     /**
      * @test
      */
-    public function satisfiesReturnsViolations()
+    public function satisfiesReturnsViolations(): void
     {
 
         $vendorPackageMock = $this->createMock(PackageInterface::class);
@@ -77,7 +77,7 @@ class ConstraintValidatorTest extends TestCase
     /**
      * @test
      */
-    public function satisfiesReturnsEmpty()
+    public function satisfiesReturnsEmpty(): void
     {
         $vendorPackageMock = $this->createMock(PackageInterface::class);
         $vendorPackageMock->method('getName')->willReturn('dep');
