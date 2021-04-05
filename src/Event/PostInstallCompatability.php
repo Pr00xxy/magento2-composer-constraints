@@ -67,7 +67,7 @@ class PostInstallCompatability implements PluginInterface, EventSubscriberInterf
         return $event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages();
     }
 
-    public function checkModules(Event $event)
+    public function checkModules(Event $event): void
     {
         $installedPackages = $this->getVendorPackages($event);
         $packages = $this->getPackageLoader()->load();
