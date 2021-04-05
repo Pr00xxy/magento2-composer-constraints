@@ -47,7 +47,6 @@ Great! submit a bug report!
 
 ## Roadmap
 
-0. Verify compatibility with 2.4
 1. plugin should detect and respect "--ignore-platform-reqs"
 2. plugin should check require-dev links
 
