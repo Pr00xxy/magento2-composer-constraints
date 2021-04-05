@@ -2,11 +2,11 @@
     "name": "prooxxy/magento2-composer-constraints",
     "description": "A Magento 2 plugin that adds relevancy to the composer.json files in app/code",
     "type": "composer-plugin",
-    "version": "0.2",
+    "version": "0.2.1",
     "keywords": ["magento2", "composer"],
     "license": ["MIT"],
     "require": {
-        "composer-plugin-api": "~1.*",
+        "composer-plugin-api": "1.*",
         "php": ">=7.3"
     },
     "require-dev": {
