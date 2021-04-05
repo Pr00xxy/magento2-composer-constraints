@@ -75,6 +75,10 @@ class PackageLoader
 
         $vendorPath = $this->composer->getConfig()->get('vendor-dir');
 
+        if ($vendorPath === null) {
+            return [];
+        }
+
         $appCode = implode(DIRECTORY_SEPARATOR, [$vendorPath, '..', 'app', 'code', '*', '*','composer.json']);
 
         return [
